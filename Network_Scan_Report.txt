@@ -1,0 +1,120 @@
+Internship Task 1: Scan Your Local Network for Open Ports
+----------------------------------------------------------
+
+Task Title    : Local Network Reconnaissance & Port Scanning
+Tools Used    : Nmap, Wireshark
+Platform Used : Kali Linux (Terminal)
+
+----------------------------------------------------------
+1. Objective
+----------------------------------------------------------
+The objective of this task is to discover open ports on devices in the local network to identify exposed services and potential security risks. This is a basic network reconnaissance exercise using both active scanning and packet analysis.
+
+----------------------------------------------------------
+2. Environment Preparation
+----------------------------------------------------------
+• Kali Linux was used as the operating system.
+• Verified that Nmap was installed:
+  Command: nmap --version
+• Verified that Wireshark was installed:
+  Command: wireshark --version
+
+----------------------------------------------------------
+3. Identifying Local IP Address and Subnet
+----------------------------------------------------------
+To determine the local IP range, the following command was used:
+
+  Command: ip a
+
+Output Example: inet 192.168.0.105/24
+
+From this, the network range was identified as: 192.168.0.105/24
+
+----------------------------------------------------------
+4. Nmap Scanning Procedure
+----------------------------------------------------------
+A TCP SYN scan was performed on the local network to detect live hosts and open TCP ports.
+
+  Command: sudo nmap -sS 192.168.1.0/24
+
+Explanation:
+  - sudo   : Required to send raw SYN packets
+  - -sS    : TCP SYN scan (stealth scan)
+  - /24    : Subnet range to scan all 254 hosts
+
+The scan identified live hosts and displayed open ports and running services.
+
+----------------------------------------------------------
+5. Saving Nmap Scan Output
+----------------------------------------------------------
+To save the results of the scan in a readable text format:
+
+  Command: sudo nmap -sS 192.168.1.0/24 -oN scan_results.txt
+
+This command created a file named `scan_results.txt` in the current directory.
+
+----------------------------------------------------------
+6. Packet Capture with Wireshark
+----------------------------------------------------------
+Wireshark was used to analyze the network packets during the scan.
+
+  Steps:
+  1. Started Wireshark:
+       Command: sudo wireshark
+  2. Selected active interface (e.g., eth0 or wlan0).
+  3. Clicked the blue shark fin icon to start capturing packets.
+  4. While capturing, the Nmap scan was run in a separate terminal.
+  5. After the scan completed, the capture was stopped and saved.
+
+  File Saved As: task_1_nmap_scan_capture.pcapng
+
+----------------------------------------------------------
+7. Packet Filtering in Wireshark
+----------------------------------------------------------
+To analyze SYN packets used in the Nmap SYN scan:
+
+  Display Filter Used: tcp.flags.syn == 1 && tcp.flags.ack == 0
+
+Explanation:
+  - This filter shows only packets where the SYN flag is set and ACK is not,
+    meaning connection initiation without response (typical of SYN scan).
+
+----------------------------------------------------------
+8. Analysis of Scan Results
+----------------------------------------------------------
+Nmap scan report for 192.168.0.1
+
+PORT     STATE SERVICE
+22/tcp   open  ssh
+53/tcp   open  domain
+80/tcp   open  http
+1900/tcp open  upnp
+MAC Address: D8:07:B6:3E:B1:BE (TP-Link Technologies)
+
+Interpretation:
+• Port 22 (SSH) — Secure remote login if strong credentials are enforced.
+• Port 53 (DNS) — Typically used for DNS; should be restricted to internal use to avoid abuse.
+• Port 80 (HTTP) — Unencrypted web traffic; should be upgraded to HTTPS.
+• Port 1900 (UPnP) — Often used by devices for discovery; can pose risks if exposed to public networks.
+
+----------------------------------------------------------
+9. Security Recommendations
+----------------------------------------------------------
+• Disable unnecessary services to minimize attack surface.
+• Restrict access to database ports like 3306 using firewalls.
+• Use encrypted protocols (HTTPS, SFTP) instead of plain ones (HTTP, FTP).
+• Regularly audit open ports and apply updates to services.
+
+----------------------------------------------------------
+10. Conclusion
+----------------------------------------------------------
+This task provided practical experience with network scanning and analysis.
+Using Nmap, I discovered active devices and their open ports within the
+local subnet. With Wireshark, I verified how SYN packets were used to probe
+for open services without completing full TCP handshakes. The exercise
+enhanced my understanding of how attackers perform reconnaissance and how to
+defend against such exposure.
+
+----------------------------------------------------------
+End of Report
+----------------------------------------------------------
